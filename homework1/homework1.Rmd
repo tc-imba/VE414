@@ -27,3 +27,20 @@ $$\Pr(A\mid B)=\frac{2\cdot2}{2\cdot2+2}=\frac{2}{3}.$$
 ### (c)
 Let $A$ be the event that the lower face of the coin is a head,
 $$\Pr(A\mid B)=\frac{4\cdot2}{4\cdot2+2}=\frac{4}{5}.$$
+
+## Question2
+
+The prior distribution of Beta(4,4) is 
+$$f_{prior}(p)=\frac{(4+4-1)!}{(4-1)!(4-1)!}p^3(1-p)^3=420p^3(1-p)^3.$$
+If $X$ denotes the number of heads out of 10 number of tosses, with the assumption of independence, then
+$$X\sim \text{Binomial}(10,p),$$
+$$\Pr(X)=\binom{10}{x}p^x(1-p)^{10-x},$$
+$$\Pr(X<3)=\sum_{i=0}^2\binom{10}{i}p^i(1-p)^{10-i}=(1-p)^{10}+10p(1-p)^9+45p^2(1-p)^8.$$
+The posterior distribution is then
+$$f_{post}(p)\propto \Pr(X<3)\cdot f_{prior}=p^3(1-p)^{13}+10p^4(1-p)^{12}+45p^5(1-p)^{11}.$$
+
+```{r ex2}
+func <- function(x) {x^3*(1-x)^13+10*x^4*(1-x)^12+45*x^5*(1-x)^11}
+curve(func, from = 0, to = 1, xlab = 'p', ylab = 'posterior density for p')
+```
+
