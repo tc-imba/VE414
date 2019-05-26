@@ -16,12 +16,14 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Question1
 
 ### (a)
-Let $A$ be the probability that the lower face of the coin is a head,
-$$\Pr(A)=\frac{2\cdot2+2}{10}=0.6.$$
+Let $A$ be the event that the lower face of the coin is a head,
+$$\Pr(A)=\frac{2\cdot2+2}{2\cdot5}=\frac{3}{5}.$$
 
 ### (b)
-
-$$\Pr=(A)$$
+Let $A$ be the event that the lower face of the coin is a head, $B$ be the event that the coin is showing heads,
+<!-- $$\Pr(A\mid B)=\frac{\Pr(B\mid A)\Pr(A)}{\Pr(B)}=\frac{2/4\cdot0.6}{0.6}=0.5.$$ -->
+$$\Pr(A\mid B)=\frac{2\cdot2}{2\cdot2+2}=\frac{2}{3}.$$
 
 ### (c)
-
+Let $A$ be the event that the lower face of the coin is a head,
+$$\Pr(A\mid B)=\frac{4\cdot2}{4\cdot2+2}=\frac{4}{5}.$$
