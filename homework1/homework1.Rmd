@@ -1,0 +1,27 @@
+---
+title: "VE414 Homework1"
+author: "Liu Yihao 515370910207"
+date: "2019-05-28"
+output: 
+  pdf_document:
+    includes:
+      in_header: header.tex
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question1
+
+### (a)
+Let $A$ be the probability that the lower face of the coin is a head,
+$$\Pr(A)=\frac{2\cdot2+2}{10}=0.6.$$
+
+### (b)
+
+$$\Pr=(A)$$
+
+### (c)
+
