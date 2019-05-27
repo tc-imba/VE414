@@ -44,3 +44,56 @@ func <- function(x) {x^3*(1-x)^13+10*x^4*(1-x)^12+45*x^5*(1-x)^11}
 curve(func, from = 0, to = 1, xlab = 'p', ylab = 'posterior density for p')
 ```
 
+## Question3
+
+We use 95% confidence interval.
+
+For the first test,
+
+```{r ex3.1}
+func <- function(x) {
+  x ^ 40 * (1 - x) ^ 10
+}
+l <- qbeta(0.025, 41, 11)
+r <- qbeta(0.975, 41, 11)
+curve(
+  func,
+  from = 0,
+  to = 1,
+  xlab = 'p',
+  ylab = 'posterior density for p'
+)
+points(l, func(l))
+points(r, func(r))
+lines(c(l, l), c(0, func(l)), lty = 2)
+lines(c(r, r), c(0, func(r)), lty = 2)
+text(l, 0, round(l, 3))
+text(r, 0, round(r, 3))
+```
+
+Since $p=0.5$ is not in the central credible interval, the data is biased.
+
+For the second test,
+
+```{r ex3.2}
+func <- function(x) {
+  x ^ 15 * (1 - x) ^ 35
+}
+l <- qbeta(0.025, 16, 36)
+r <- qbeta(0.975, 16, 36)
+curve(
+  func,
+  from = 0,
+  to = 1,
+  xlab = 'p',
+  ylab = 'posterior density for p'
+)
+points(l, func(l))
+points(r, func(r))
+lines(c(l, l), c(0, func(l)), lty = 2)
+lines(c(r, r), c(0, func(r)), lty = 2)
+text(l, 0, round(l, 3))
+text(r, 0, round(r, 3))
+```
+
+Since $p=0.5$ is not in the central credible interval, the data is biased.
