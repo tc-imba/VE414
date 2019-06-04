@@ -1,11 +1,16 @@
 ---
 title: true
 geometry: margin=2.25cm
+header-includes:
+  - \usepackage{../ve414}
+  - \author{\href{mailto:liuyh615@sjtu.edu.cn}{Yihao Liu} (515370910207)}
+  - \semester{Summer}
+  - \year{2019}
+  - \subtitle{Assignment}
+  - \subtitlenumber{1}
+  - \blockinfo{}
 output: 
   pdf_document:
-    includes:
-      keep_tex: yes
-      in_header: header.tex
     latex_engine: xelatex
 ---
 
