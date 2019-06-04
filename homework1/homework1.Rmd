@@ -1,10 +1,10 @@
 ---
-title: "VE414 Homework1"
-author: "Liu Yihao 515370910207"
-date: "2019-05-28"
+title: true
+geometry: margin=2.25cm
 output: 
   pdf_document:
     includes:
+      keep_tex: yes
       in_header: header.tex
     latex_engine: xelatex
 ---
@@ -25,7 +25,7 @@ Let $A$ be the event that the lower face of the coin is a head, $B$ be the event
 $$\Pr(A\mid B)=\frac{2\cdot2}{2\cdot2+2}=\frac{2}{3}.$$
 
 ### (c)
-Let $A$ be the event that the lower face of the coin is a head,
+Let $A$ be the event that the lower face of the coin is a head, $B$ be the event that the coin is showing heads again,
 $$\Pr(A\mid B)=\frac{4\cdot2}{4\cdot2+2}=\frac{4}{5}.$$
 
 ## Question2
@@ -125,7 +125,11 @@ $$L(p)=L(h^{-1}(h(p))),$$
 are both maximized by $p$, then
 $$\tilde{p}=h^{-1}(\widetilde{h(p)}),$$
 $$h(\tilde{p})=\widetilde{h(p)}.$$
-Now if $h$ is non-monotone function, which means $f\to h$ is many to one, with the same procedure as above, except that we define the inverse mapping function $h^{-1}(x)$ mapping to either corrrect origin point, then $\tilde{p}$ which maximizes $L(p)$ still corresponds to $h(\tilde{p})$.
+Now if $h$ is non-monotone function, which means $f\to h$ is many to one, with the same procedure as above, except that we define the inverse mapping function $h^{-1}(x)$ as a one to many mapping, then we may get more than one possible $\tilde{p}$ in
+$$\tilde{p}=h^{-1}(\widetilde{h(p)}).$$
+However, only one of them is the original $\tilde{p}$, and what's more important, the original $\tilde{p}$ which maximizes $L(p)$ still corresponds to $h(\tilde{p})$, so $h(\tilde{p})=\widetilde{h(p)}$ dosen't change.
+
+With this property, we can simplt get
 
 $$\tilde{q}=\tilde{p}(1-\tilde{p})=\frac{1}{\bar{x}}\cdot\frac{\bar{x}-1}{\bar{x}}=\frac{\bar{x}-1}{\bar{x}^2}.$$
 
