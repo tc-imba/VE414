@@ -1,0 +1,145 @@
+---
+title: "VE414 Homework2"
+author: "Liu Yihao 515370910207"
+date: "2019-06-04"
+output: 
+  pdf_document:
+    includes:
+      in_header: header.tex
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question1
+
+We use 95% confidence interval.
+
+For the junior students,
+
+```{r ex1.1}
+a <- 3; b <- 7
+m <- 16; n <- 71
+func <- function(x) {
+  dbinom(m, m + n, x) * dbeta(x, a, b)
+}
+C <- 1 / integrate(func, 0, 1)$value
+l <- qbeta(0.025, a + m, b + n)
+r <- qbeta(0.975, a + m, b + n)
+func2 <- function(x) {C * func(x)}
+curve(func2, from = 0, to = 1, xlab = 'p', ylab = 'posterior density for p')
+points(l, func2(l))
+points(r, func2(r))
+lines(c(l, l), c(0, func2(l)), lty = 2)
+lines(c(r, r), c(0, func2(r)), lty = 2)
+text(l, 0, round(l, 3))
+text(r, 0, round(r, 3))
+```
+
+Since $p=0.5$ is not in the central credible interval, the data is biased.
+
+For the senior students,
+
+```{r ex1.2}
+a <- 3; b <- 7
+m <- 34; n <- 10
+func <- function(x) {
+  dbinom(m, m + n, x) * dbeta(x, a, b)
+}
+C <- 1 / integrate(func, 0, 1)$value
+l <- qbeta(0.025, a + m, b + n)
+r <- qbeta(0.975, a + m, b + n)
+func2 <- function(x) {C * func(x)}
+curve(func2, from = 0, to = 1, xlab = 'p', ylab = 'posterior density for p')
+points(l, func2(l))
+points(r, func2(r))
+lines(c(l, l), c(0, func2(l)), lty = 2)
+lines(c(r, r), c(0, func2(r)), lty = 2)
+text(l, 0, round(l, 3))
+text(r, 0, round(r, 3))
+```
+
+Since $p=0.5$ is not in the central credible interval, the data is biased.
+
+So at least someone is guilty, maybe someone in the UEO office, or maybe the instructor, who knows?
+
+## Question 2
+
+### (a)
+
+$$\frac{\alpha}{\beta}=15, \frac{\alpha}{\beta^2}=25,$$
+$$\alpha=9,\beta=0.6.$$
+
+The prior distribution of Gamma(9,0.6) is 
+$$f_{prior}(y)=\frac{\beta^\alpha y^{\alpha-1}e^{-\beta y}}{\Gamma(\alpha)}\propto y^{\alpha-1}e^{-\beta y}.$$
+
+We define the likelihood function $L$ by
+$$L(y)=\prod_{i=1}^n \frac{e^{-y}y^{x_i}}{x_i!}=\frac{e^{-ny}y^{\sum_{i=1}^nx_i}}{\prod_{i=1}^nx_i!}\propto e^{-ny}y^{\sum_{i=1}^nx_i}.$$
+The posterior distribution is then
+$$f_{post}(y)\propto L(y)\cdot f_{prior}(y)=e^{-(n+\beta)y}y^{\alpha-1+\sum_{i=1}^nx_i}\sim\Gamma(y;9+\sum_{i=1}^nx_i,0.6+n).$$
+
+### (b)
+$$f_{postpredict}(x^*)=C\int \Pr(x^*)\cdot f_{post}(y) dy\propto \int_0^1\frac{e^{-y}y^{x^*}}{x^*!}\cdot e^{-(n+\beta)y}y^{\alpha-1+\sum_{i=1}^nx_i}dy\propto\int_0^1e^{-(n+1+\beta)y}y^{\alpha-1+x^*+\sum_{i=1}^nx_i}dy.$$
+Let $a=n+1+\beta$, $b=\alpha-1+x^*+\sum_{i=1}^nx_i$,
+
+$$
+\begin{aligned}
+f_{postpredict}(x^*)&\propto-\frac{y^bay^{-b}\Gamma(1+b,ay)}{a}\Bigg|_0^1\\&=a^{-1-b}[\Gamma(1+b)-\Gamma(1+b,a)]\\&=(n+1+\beta)^{-(\alpha+x^*+\sum_{i=1}^nx_i)}\left[\Gamma\left(\alpha+x^*+\sum_{i=1}^nx_i\right)-\Gamma\left(\alpha+x^*+\sum_{i=1}^nx_i,n+1+\beta\right)\right]\\&=(1.6+n)^{-(9+x^*+\sum_{i=1}^nx_i)}\left[\Gamma\left(9+x^*+\sum_{i=1}^nx_i\right)-\Gamma\left(9+x^*+\sum_{i=1}^nx_i,1.6+n\right)\right].
+\end{aligned}
+$$
+
+## Question3
+
+### (a)
+```{r ex3.1}
+a <- 1; b <- 1
+m <- 2; n <- 1
+func <- function(x) {
+  dbinom(m, m + n, x) * dbeta(x, a, b)
+}
+C <- 1 / integrate(func, 0, 1)$value
+func2 <- function(x) {C * func(x)}
+curve(func2, from = 0, to = 1, xlab = 'p', ylab = 'posterior density for p')
+a <- 0.5; b <- 0.5
+func <- function(x) {
+  dbinom(m, m + n, x) * dbeta(x, a, b)
+}
+C <- 1 / integrate(func, 0, 1)$value
+func2 <- function(x) {C * func(x)}
+curve(func2, from = 0, to = 1, lty = 2, add = TRUE)
+legend(0, 1.5, legend=c("Uniform prior", "Jeffreys prior"), lty=1:2)
+```
+
+The posteriors obtained by uniform prior and the Jeffreys prior are different.
+
+### (b)
+```{r ex3.2}
+a <- 1; b <- 1
+m <- 200; n <- 100
+func <- function(x) {
+  dbinom(m, m + n, x) * dbeta(x, a, b)
+}
+C <- 1 / integrate(func, 0, 1)$value
+func2 <- function(x) {C * func(x)}
+curve(func2, from = 0, to = 1, xlab = 'p', ylab = 'posterior density for p')
+a <- 0.5; b <- 0.5
+func <- function(x) {
+  dbinom(m, m + n, x) * dbeta(x, a, b)
+}
+C <- 1 / integrate(func, 0, 1)$value
+func2 <- function(x) {C * func(x)}
+curve(func2, from = 0, to = 1, lty = 2, add = TRUE)
+legend(0, 10, legend=c("Uniform prior", "Jeffreys prior"), lty=1:2)
+```
+
+The posteriors obtained by uniform prior and the Jeffreys prior are almost the same.
+
+### (c)
+
+$$f_{prior}(p)\propto p^{-1}(1-p)^{-1},$$
+$$L(p)=p(1-p),$$
+$$f_{post}(p)\propto L(p)\cdot f_{prior}(p)=1.$$
+We can find that the posterior distribution is a uniform distribution, which means that we actually have no information before any more observations are made. It is considered to reflect our ignorance in a certain sense.
+
