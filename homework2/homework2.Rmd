@@ -37,8 +37,8 @@ points(l, func2(l))
 points(r, func2(r))
 lines(c(l, l), c(0, func2(l)), lty = 2)
 lines(c(r, r), c(0, func2(r)), lty = 2)
-text(l, 0, round(l, 3))
-text(r, 0, round(r, 3))
+text(l, 3, round(l, 3))
+text(r, 3, round(r, 3))
 a <- 3; b <- 7
 m <- 34; n <- 10
 func <- function(x) {
@@ -54,8 +54,8 @@ points(l, func2(l))
 points(r, func2(r))
 lines(c(l, l), c(0, func2(l)), lty = 2)
 lines(c(r, r), c(0, func2(r)), lty = 2)
-text(l, 0, round(l, 3))
-text(r, 0, round(r, 3))
+text(l, 2, round(l, 3))
+text(r, 2, round(r, 3))
 ```
 
 Since two central credible intervals don't intersect with each other, we can not determine a possible $p$ at 0.05 significance level. So at least someone is guilty, maybe someone in the UEO office, or maybe the instructor, who knows?

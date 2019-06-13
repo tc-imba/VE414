@@ -1,0 +1,46 @@
+---
+title: true
+geometry: margin=2.25cm
+header-includes:
+  - \usepackage{../ve414}
+  - \author{\href{mailto:liuyh615@sjtu.edu.cn}{Yihao Liu} (515370910207)}
+  - \semester{Summer}
+  - \year{2019}
+  - \subtitle{Assignment}
+  - \subtitlenumber{3}
+  - \blockinfo{}
+output: 
+  pdf_document:
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question1
+
+### (a)
+
+The joint likelihood is 
+$$f_{\mathbf{Y}\mid\{\mathbf{X},\alpha,\beta\}}=\prod_{i=1}^n\text{Poisson}(x_i;y_i)=\prod_{i=1}^n\frac{y_i^{x_i}e^{-y_i}}{x_i!}.$$
+
+The conditional prior is
+$$f_{\mathbf{X}\mid\{\alpha,\beta\}}=\prod_{i=1}^n\text{Gamma}(x_i;\alpha,\beta)=\prod_{i=1}^n\frac{\beta^\alpha x_i^{\alpha-1}e^{-\beta x_i}}{\Gamma(\alpha)}.$$
+
+The hyperprior is
+$$f_{\alpha,\beta}=\text{Exp}(\alpha;a)\cdot\text{Gamma}(\beta;b,c)=ae^{-a\alpha}\cdot\frac{c^b\beta^{b-1}e^{-c\beta}}{\Gamma(b)}\propto \beta^{b-1}e^{-a\alpha-c\beta}.$$
+
+The joint posterior is
+$$f_{\{\mathbf{Y},\alpha,\beta\}\mid\mathbf{X}}\propto f_{\mathbf{Y}\mid\{\mathbf{X},\alpha,\beta\}}\cdot f_{\mathbf{X}\mid\{\alpha,\beta\}} \cdot f_{\alpha,\beta}\propto \beta^{b-1}e^{-a\alpha-c\beta}\prod_{i=1}^n\frac{\beta^\alpha x_i^{\alpha-1}y_i^{x_i}e^{-\beta x_i-y_i}}{x_i!\Gamma(\alpha)}.$$
+
+### (b)
+
+$Y_1, Y_2, \cdots, Y_n$ should be independent.
+
+### (c)
+
+
+
+
+
