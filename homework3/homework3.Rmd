@@ -23,22 +23,46 @@ knitr::opts_chunk$set(echo = TRUE)
 ### (a)
 
 The joint likelihood is 
-$$f_{\mathbf{Y}\mid\{\mathbf{X},\alpha,\beta\}}=\prod_{i=1}^n\text{Poisson}(x_i;y_i)=\prod_{i=1}^n\frac{y_i^{x_i}e^{-y_i}}{x_i!}.$$
+$$f_{\mathbf{X}\mid\{\mathbf{Y},\alpha,\beta\}}=\prod_{i=1}^n\text{Poisson}(x_i;y_i)=\prod_{i=1}^n\frac{y_i^{x_i}e^{-y_i}}{x_i!}\propto y_i^{x_i}e^{-y_i}.$$
 
 The conditional prior is
-$$f_{\mathbf{X}\mid\{\alpha,\beta\}}=\prod_{i=1}^n\text{Gamma}(x_i;\alpha,\beta)=\prod_{i=1}^n\frac{\beta^\alpha x_i^{\alpha-1}e^{-\beta x_i}}{\Gamma(\alpha)}.$$
+$$f_{\mathbf{Y}\mid\{\alpha,\beta\}}=\prod_{i=1}^n\text{Gamma}(y_i;\alpha,\beta)=\prod_{i=1}^n\frac{\beta^\alpha y_i^{\alpha-1}e^{-\beta y_i}}{\Gamma(\alpha)}.$$
 
 The hyperprior is
 $$f_{\alpha,\beta}=\text{Exp}(\alpha;a)\cdot\text{Gamma}(\beta;b,c)=ae^{-a\alpha}\cdot\frac{c^b\beta^{b-1}e^{-c\beta}}{\Gamma(b)}\propto \beta^{b-1}e^{-a\alpha-c\beta}.$$
 
 The joint posterior is
-$$f_{\{\mathbf{Y},\alpha,\beta\}\mid\mathbf{X}}\propto f_{\mathbf{Y}\mid\{\mathbf{X},\alpha,\beta\}}\cdot f_{\mathbf{X}\mid\{\alpha,\beta\}} \cdot f_{\alpha,\beta}\propto \beta^{b-1}e^{-a\alpha-c\beta}\prod_{i=1}^n\frac{\beta^\alpha x_i^{\alpha-1}y_i^{x_i}e^{-\beta x_i-y_i}}{x_i!\Gamma(\alpha)}.$$
+$$f_{\{\mathbf{Y},\alpha,\beta\}\mid\mathbf{X}}\propto f_{\mathbf{X}\mid\{\mathbf{Y},\alpha,\beta\}}\cdot f_{\mathbf{Y}\mid\{\alpha,\beta\}} \cdot f_{\alpha,\beta}\propto \beta^{b-1}e^{-a\alpha-c\beta}\prod_{i=1}^n\frac{\beta^\alpha y_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}}{\Gamma(\alpha)}=\frac{\beta^{n\alpha+b-1}e^{-a\alpha-c\beta}}{\Gamma(\alpha)^n}\prod_{i=1}^ny_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}.$$
 
 ### (b)
 
-$Y_1, Y_2, \cdots, Y_n$ should be independent.
+$X_1, X_2, \cdots, X_n, Y_1, Y_2, \cdots, Y_n, \alpha, \beta$ should be independent.
 
 ### (c)
+
+The conditional posterior $f_{\{\mathbf{Y},\beta\}\mid\{\mathbf{X},\alpha\}}$ is
+$$f_{\{\mathbf{Y},\beta\}\mid\{\mathbf{X},\alpha\}}=\frac{f_{\{\mathbf{Y},\alpha,\beta\}\mid\textbf{X}}}{f_{\alpha\mid\mathbf{X}}}\propto f_{\{\mathbf{Y},\alpha,\beta\}\mid\textbf{X}}=\frac{\beta^{n\alpha+b-1}e^{-a\alpha-c\beta}}{\Gamma(\alpha)}\prod_{i=1}^ny_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}\propto \beta^{n\alpha+b-1}e^{-c\beta}\prod_{i=1}^ny_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}.$$
+
+We have
+$$y_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}\propto\text{Gamma}(yi;x_i+\alpha,\beta+1)=\frac{(\beta+1)^{x_i+\alpha}}{\Gamma(x_i+\alpha)}y_i^{x_i+\alpha-1}e^{-(\beta+1)y_i},$$
+$$\beta^{n\alpha+b-1}e^{-c\beta}\propto\text{Gamma}(\beta;n\alpha+b,c)=\frac{c^{n\alpha+b}}{\Gamma(n\alpha+b)}\beta^{n\alpha+b-1}e^{-c\beta}.$$
+
+So the normalized conditional posterior $f_{\{\mathbf{Y},\beta\}\mid\{\mathbf{X},\alpha\}}$ is
+$$f_{\{\mathbf{Y},\beta\}\mid\{\mathbf{X},\alpha\}}=\frac{c^{n\alpha+b}}{\Gamma(n\alpha+b)}\beta^{n\alpha+b-1}e^{-c\beta}\prod_{i=1}^n\frac{(\beta+1)^{x_i+\alpha}}{\Gamma(x_i+\alpha)}y_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}.$$
+
+### (d)
+
+The conditional posterior $f_{\mathbf{Y}\mid\{\mathbf{X},\alpha,\beta\}}$ is
+$$f_{\mathbf{Y}\mid\{\mathbf{X},\alpha,\beta\}}=\frac{f_{\{\mathbf{Y},\alpha,\beta\}\mid\textbf{X}}}{f_{\{\alpha,\beta\}\mid\mathbf{X}}}\propto \beta^{n\alpha+b-1}e^{-c\beta}\prod_{i=1}^ny_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}\propto\prod_{i=1}^ny_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}.$$
+
+Similar to (c), the normalized conditional posterior $f_{\mathbf{Y}\mid\{\mathbf{X},\alpha,\beta\}}$ is
+$$f_{\mathbf{Y}\mid\{\mathbf{X},\alpha,\beta\}}=\prod_{i=1}^n\frac{(\beta+1)^{x_i+\alpha}}{\Gamma(x_i+\alpha)}y_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}.$$
+
+The marginal posterior is
+$$f_{\{\alpha,\beta\}\mid\mathbf{X}}=\frac{f_{\{\mathbf{Y},\alpha,\beta\}\mid\mathbf{X}}}{f_{\mathbf{Y}\mid\{\mathbf{X},\alpha,\beta\}}}\propto \frac{\beta^{n\alpha+b-1}e^{-a\alpha-c\beta}}{\Gamma(\alpha)^n}\prod_{i=1}^n\frac{\Gamma(x_i+\alpha)}{(\beta+1)^{x_i+\alpha}}=\beta^{n\alpha+b-1}e^{-a\alpha-c\beta}\prod_{i=1}^n\frac{\Gamma(x_i+\alpha)}{\Gamma(\alpha)(\beta+1)^{x_i+\alpha}}$$
+
+
+
 
 
 
