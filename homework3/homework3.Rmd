@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ### (a)
 
 The joint likelihood is 
-$$f_{\mathbf{X}\mid\{\mathbf{Y},\alpha,\beta\}}=\prod_{i=1}^n\text{Poisson}(x_i;y_i)=\prod_{i=1}^n\frac{y_i^{x_i}e^{-y_i}}{x_i!}\propto y_i^{x_i}e^{-y_i}.$$
+$$f_{\mathbf{X}\mid\{\mathbf{Y},\alpha,\beta\}}=\prod_{i=1}^n\text{Poisson}(x_i;y_i)=\prod_{i=1}^n\frac{y_i^{x_i}e^{-y_i}}{x_i!}.$$
 
 The conditional prior is
 $$f_{\mathbf{Y}\mid\{\alpha,\beta\}}=\prod_{i=1}^n\text{Gamma}(y_i;\alpha,\beta)=\prod_{i=1}^n\frac{\beta^\alpha y_i^{\alpha-1}e^{-\beta y_i}}{\Gamma(\alpha)}.$$
@@ -36,12 +36,17 @@ $$f_{\{\mathbf{Y},\alpha,\beta\}\mid\mathbf{X}}\propto f_{\mathbf{X}\mid\{\mathb
 
 ### (b)
 
-$X_1, X_2, \cdots, X_n, Y_1, Y_2, \cdots, Y_n, \alpha, \beta$ should be independent.
+$X_1, X_2, \cdots, X_n, \alpha, \beta$ should be independent with each other.
+
+$Y_1, Y_2, \cdots, Y_n, \alpha, \beta$ should be independent with each other.
+
+$\{X_i, Y_j\mid i\neq j\}$ should be independent.
+
 
 ### (c)
 
 The conditional posterior $f_{\{\mathbf{Y},\beta\}\mid\{\mathbf{X},\alpha\}}$ is
-$$f_{\{\mathbf{Y},\beta\}\mid\{\mathbf{X},\alpha\}}=\frac{f_{\{\mathbf{Y},\alpha,\beta\}\mid\textbf{X}}}{f_{\alpha\mid\mathbf{X}}}\propto f_{\{\mathbf{Y},\alpha,\beta\}\mid\textbf{X}}=\frac{\beta^{n\alpha+b-1}e^{-a\alpha-c\beta}}{\Gamma(\alpha)}\prod_{i=1}^ny_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}\propto \beta^{n\alpha+b-1}e^{-c\beta}\prod_{i=1}^ny_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}.$$
+$$f_{\{\mathbf{Y},\beta\}\mid\{\mathbf{X},\alpha\}}=\frac{f_{\{\mathbf{Y},\alpha,\beta\}\mid\textbf{X}}}{f_{\alpha\mid\mathbf{X}}}\propto f_{\{\mathbf{Y},\alpha,\beta\}\mid\textbf{X}}=\frac{\beta^{n\alpha+b-1}e^{-a\alpha-c\beta}}{\Gamma(\alpha)^n}\prod_{i=1}^ny_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}\propto \beta^{n\alpha+b-1}e^{-c\beta}\prod_{i=1}^ny_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}.$$
 
 We have
 $$y_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}\propto\text{Gamma}(yi;x_i+\alpha,\beta+1)=\frac{(\beta+1)^{x_i+\alpha}}{\Gamma(x_i+\alpha)}y_i^{x_i+\alpha-1}e^{-(\beta+1)y_i},$$
@@ -59,7 +64,35 @@ Similar to (c), the normalized conditional posterior $f_{\mathbf{Y}\mid\{\mathbf
 $$f_{\mathbf{Y}\mid\{\mathbf{X},\alpha,\beta\}}=\prod_{i=1}^n\frac{(\beta+1)^{x_i+\alpha}}{\Gamma(x_i+\alpha)}y_i^{x_i+\alpha-1}e^{-(\beta+1)y_i}.$$
 
 The marginal posterior is
-$$f_{\{\alpha,\beta\}\mid\mathbf{X}}=\frac{f_{\{\mathbf{Y},\alpha,\beta\}\mid\mathbf{X}}}{f_{\mathbf{Y}\mid\{\mathbf{X},\alpha,\beta\}}}\propto \frac{\beta^{n\alpha+b-1}e^{-a\alpha-c\beta}}{\Gamma(\alpha)^n}\prod_{i=1}^n\frac{\Gamma(x_i+\alpha)}{(\beta+1)^{x_i+\alpha}}=\beta^{n\alpha+b-1}e^{-a\alpha-c\beta}\prod_{i=1}^n\frac{\Gamma(x_i+\alpha)}{\Gamma(\alpha)(\beta+1)^{x_i+\alpha}}$$
+$$f_{\{\alpha,\beta\}\mid\mathbf{X}}=\frac{f_{\{\mathbf{Y},\alpha,\beta\}\mid\mathbf{X}}}{f_{\mathbf{Y}\mid\{\mathbf{X},\alpha,\beta\}}}\propto \frac{\beta^{n\alpha+b-1}e^{-a\alpha-c\beta}}{\Gamma(\alpha)^n}\prod_{i=1}^n\frac{\Gamma(x_i+\alpha)}{(\beta+1)^{x_i+\alpha}}=\beta^{n\alpha+b-1}e^{-a\alpha-c\beta}\prod_{i=1}^n\frac{\Gamma(x_i+\alpha)}{\Gamma(\alpha)(\beta+1)^{x_i+\alpha}}.$$
+
+## Question2
+
+### (a)
+
+Let 
+$$z=\left\{\begin{aligned}0, &\quad\text{a greasy grouper}\\1, &\quad\text{a tiger grouper}\end{aligned}\right..$$
+
+Then $$C(y,z)=\left\{\begin{aligned}0.1, &\quad y=0,z=1\\0.9, &\quad y=1,z=0\\0, &\quad y=z\end{aligned}\right..$$
+
+
+And since there are twice as many tiger groupers in the tank,
+$$f_{Y=0}=\frac{1}{3},\quad f_{Y=1}=\frac{2}{3}.$$
+
+$$f_{Y=0\mid\mathbf{X}}\propto f_{\mathbf{X}\mid Y=0}\cdot f_{Y=0}=\frac{1}{3}f_{\mathbf{X}\mid Y=0},$$
+$$f_{Y=1\mid\mathbf{X}}\propto f_{\mathbf{X}\mid Y=1}\cdot f_{Y=1}=\frac{2}{3}f_{\mathbf{X}\mid Y=1}$$
+
+Since $f_{Y=0\mid\mathbf{X}}$, $f_{\mathbf{X}\mid Y=0}$ are probability distributions, there intergral should both be 1, so
+$$f_{Y=0\mid\mathbf{X}}=f_{\mathbf{X}\mid Y=0}=(2\pi)^{-1}(\det\mathbf{\Sigma_g})^{-1/2}\exp\left[-\frac{1}{2}(\mathbf{x}-\mu_g)^T\mathbf{\Sigma_g}(\mathbf{x}-\mu_g)\right]=\frac{1}{2\sqrt{3}\pi}\exp\left[\frac{1}{3}(-139-x_1^2+7x_2+16x_1+x_1x_2-x_2^2)\right].$$
+
+Similarly,
+$$f_{Y=1\mid\mathbf{X}}=f_{\mathbf{X}\mid Y=1}=(2\pi)^{-1}(\det\mathbf{\Sigma_t})^{-1/2}\exp\left[-\frac{1}{2}(\mathbf{x}-\mu_t)^T\mathbf{\Sigma_t}(\mathbf{x}-\mu_t)\right]=\frac{1}{2\sqrt{23}\pi}\exp\left[\frac{1}{23}(-207-x_1^2+69x_2+x_1x_2-6x_2^2)\right].$$
+
+The optimal decision rule is
+$$\begin{aligned}z=\delta(\mathbf{x})&=\mathop{\arg\min}_{z\in S}\sum_{y\in S}C(y,z)f_{Y=y\mid\mathbf{X}}\\&=\mathop{\arg\min}_{z\in S}\left\{0.1z\cdot f_{Y=0\mid\mathbf{X}}+0.9(z-1)\cdot f_{Y=1\mid\mathbf{X}}\right\}\\&=\mathop{\arg\min}_{z\in S}\left\{0.1z\cdot \frac{1}{2\sqrt{3}\pi}\exp\left[\frac{1}{3}(-139-x_1^2+7x_2+16x_1+x_1x_2-x_2^2)\right]+\right.\\&\qquad\qquad\quad\left. 0.9(z-1)\cdot \frac{1}{2\sqrt{23}\pi}\exp\left[\frac{1}{23}(-207-x_1^2+69x_2+x_1x_2-6x_2^2)\right]\right\}\end{aligned}$$
+
+
+
 
 
 
