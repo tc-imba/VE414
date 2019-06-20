@@ -52,7 +52,7 @@ end
 library(pander)
 library(data.table)
 dt = data.table(
-  'Grid size $n$'=c(50,250,750,1000,3000),
+  'Grid size $n$'=c(50,250,750,1500,3000),
   '$A$'=c(1.518533685915895,1.5433261739723791,1.5474582386951965,1.5484912548759011,1.5490077629662533),
   '$E[Y\\mid X=0.5]$'=c(0.26617603866975403,0.26617612339069857,0.2661761233906986,0.2661761233906986,0.26617612339069857)
 )
@@ -90,7 +90,7 @@ end
 library(pander)
 library(data.table)
 dt = data.table(
-  'Grid size $n$'=c(50,50,250,250,750,750,1000,1000,3000,3000),
+  'Grid size $n$'=c(50,50,250,250,750,750,1500,1500,3000,3000),
   'Sample size $m$'=c(100,1000,100,1000,100,1000,100,1000,100,1000),
   '$A$'=c(1.518533685915895,1.518533685915895,1.5433261739723791,1.5433261739723791,1.5474582386951965,
           1.5474582386951965,1.5484912548759011,1.5484912548759011,1.5490077629662533,1.5490077629662533),
@@ -136,14 +136,12 @@ for n in grid_sizes
 end
 ```
 
-We can find that the results are similar, especially when $n$ is large. It is because the probability when $|y|>5$ is very small so that the two grid approximation can be considered the same when $|y|$ becomes larger.
-
 
 ```{r ex1.5b, echo=FALSE, message=FALSE, warnings=FALSE, error=FALSE, results='asis'}
 library(pander)
 library(data.table)
 dt = data.table(
-  'Grid size $n$'=c(50,250,750,1000,3000),
+  'Grid size $n$'=c(50,250,750,1500,3000),
   '$A$'=c(1.5185336153755467,1.5433258991290983,1.5474579432536377,1.5484912548758503,1.5490077629662533),
   '$E[Y\\mid X=0.5]$'=c(0.2661755641372647,0.26617525294322386,0.2661751929154218,0.26617612339045515,0.2661761233906986)
 )
@@ -153,4 +151,6 @@ panderOptions('round', 10)
 pander(dt, style = 'rmarkdown')
 ```
 
+
+We can find that the results are similar, especially when $n$ is large. It is because the probability when $|y|>5$ is very small so that the two grid approximation can be considered the same when $|y|$ becomes larger.
 
