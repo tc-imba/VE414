@@ -1,0 +1,156 @@
+---
+title: "yes"
+header-includes:
+- \usepackage{../ve414}
+- \semester{Summer}
+- \year{2019}
+- \subtitle{Assignment}
+- \subtitlenumber{4}
+- \blockinfo{}
+- \author{\href{mailto:liuyh615@sjtu.edu.cn}{Yihao Liu} (515370910207)}
+output:
+  pdf_document:
+    latex_engine: xelatex
+    
+geometry: margin=2.25cm
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::knit_engines$set(julia = JuliaCall::eng_juliacall)
+library(pander)
+```
+
+## Question1
+
+### (a)
+
+$$f_{Y\mid X}\propto \exp\left[-\frac{(x-y)^2}{2}\right]\times\frac{1}{1+y^2}dy$$
+$$\begin{aligned}A&=\int_{-\infty}^\infty f_{X=x\mid Y}f_Y(y)dy \\&= \int_{-\infty}^\infty\exp\left[-\frac{(x-y)^2}{2}\right]\times\frac{1}{1+y^2}dy\\&=\int_{-\pi/2}^{\pi/2}\exp\left[-\frac{(x-\tan u)^2}{2}\right]du\\&\approx \frac{\pi}{n}\sum_{i=1}^n \exp\left[-\frac{(x-\tan u_i)^2}{2}\right].\end{aligned}$$
+
+$$\begin{aligned}E[Y\mid X=x]&=\frac{1}{A}\int_{-\infty}^\infty f_{X=x\mid Y}f_Y(y)ydy\\&=\frac{1}{A}\int_{-\infty}^\infty\exp\left[-\frac{(x-y)^2}{2}\right]\times\frac{y}{1+y^2}dy\\&=\frac{1}{A}\int_{-\pi/2}^{\pi/2}\exp\left[-\frac{(x-\tan u)^2}{2}\right]\tan udu\\&\approx \frac{\pi}{An}\sum_{i=1}^n \exp\left[-\frac{(x-\tan u_i)^2}{2}\right]\tan u_i.\end{aligned}$$
+
+
+```{julia ex1.1, results="hide", eval=FALSE}
+function grid_approximation(x, n)
+  y_grid = collect(range(-pi/2 , length=n , stop=pi/2))
+  unnormalised_posterior = map(u->exp(-(x-tan(u))^2/2), y_grid)
+  unnormalised_expectation = map(u->exp(-(x-tan(u))^2/2)*tan(u), y_grid)
+  A = pi * sum(unnormalised_posterior) / n
+  E = pi * sum(unnormalised_expectation) / A / n
+  return A, E
+end
+grid_sizes = [50, 250, 750, 1500, 3000]
+for n in grid_sizes
+  println(grid_approximation(0.5, n))
+end
+```
+
+### (b)
+
+```{r ex1.2, echo=FALSE, message=FALSE, warnings=FALSE, error=FALSE, results='asis'}
+library(pander)
+library(data.table)
+dt = data.table(
+  'Grid size $n$'=c(50,250,750,1000,3000),
+  '$A$'=c(1.518533685915895,1.5433261739723791,1.5474582386951965,1.5484912548759011,1.5490077629662533),
+  '$E[Y\\mid X=0.5]$'=c(0.26617603866975403,0.26617612339069857,0.2661761233906986,0.2661761233906986,0.26617612339069857)
+)
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 10)
+panderOptions('round', 10)
+pander(dt, style = 'rmarkdown')
+```
+
+### (c)
+
+```{julia ex1.3, results="hide", eval=FALSE}
+using Distributions
+function direct_grid_approximation(x, n, m)
+  y_grid = collect(range(-pi/2 , length=n , stop=pi/2))
+  unnormalised_posterior = map(y->exp(-(x-tan(y))^2/2), y_grid)
+  A = pi * sum(unnormalised_posterior) / n
+  posterior = unnormalised_posterior / A
+  samples = map(y->tan(y), wsample(y_grid, posterior, m))
+  E = sum(samples) / m
+  return A, E
+end
+grid_sizes = [50, 250, 750, 1500, 3000]
+sample_sizes = [100, 1000]
+for n in grid_sizes
+  for m in sample_sizes
+    println(direct_grid_approximation(0.5, n, m))
+  end
+end
+```
+
+### (d)
+
+```{r ex1.4, echo=FALSE, message=FALSE, warnings=FALSE, error=FALSE, results='asis'}
+library(pander)
+library(data.table)
+dt = data.table(
+  'Grid size $n$'=c(50,50,250,250,750,750,1000,1000,3000,3000),
+  'Sample size $m$'=c(100,1000,100,1000,100,1000,100,1000,100,1000),
+  '$A$'=c(1.518533685915895,1.518533685915895,1.5433261739723791,1.5433261739723791,1.5474582386951965,
+          1.5474582386951965,1.5484912548759011,1.5484912548759011,1.5490077629662533,1.5490077629662533),
+  '$E[Y\\mid X=0.5]$'=c(0.2209137718584357,0.27685617188547784,0.2504343983283418,0.2873817359090354,0.2189899855072082,
+                        0.26642227297664456,0.37662597410130233,0.2669810205888934,0.2906436677112582,0.2927511428475612)
+)
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 10)
+panderOptions('round', 10)
+pander(dt, style = 'rmarkdown')
+```
+
+### (e)
+
+```{julia ex1.5a, results="hide", eval=FALSE}
+function no_transform_grid_approximation(x, a, b, n) 
+  if n <= 1000
+    y_grid = collect(range(a, length=n, stop=b))
+    newa = a
+  elseif n > 1000 && n <= 2000
+    nm = 1000
+    na = round(Int, (n-nm)/2)
+    l = (b-a)/(nm-1)
+    newa = a - l*na
+    y_grid = collect(range(newa, step=l, length=n))
+  else n > 2000
+    nm = round(Int, n/2)
+    na = round(Int, (n-nm)/2)
+    l = (b-a)/(nm-1)
+    newa = a - l*na
+    y_grid = collect(range(newa, step=l, length=n))
+  end
+  unnormalised_posterior = map(y->exp(-(x-y)^2/2)/(1+y^2), y_grid)
+  unnormalised_expectation = map(y->exp(-(x-y)^2/2)/(1+y^2)*y, y_grid)
+  A = (y_grid[n]-y_grid[1]) * sum(unnormalised_posterior) / n
+  E = (y_grid[n]-y_grid[1]) * sum(unnormalised_expectation) / A / n
+  return A, E
+end
+
+grid_sizes = [50, 250, 750, 1500, 3000]
+for n in grid_sizes
+  println(no_transform_grid_approximation(0.5, -5, 5, n))
+end
+```
+
+We can find that the results are similar, especially when $n$ is large. It is because the probability when $|y|>5$ is very small so that the two grid approximation can be considered the same when $|y|$ becomes larger.
+
+
+```{r ex1.5b, echo=FALSE, message=FALSE, warnings=FALSE, error=FALSE, results='asis'}
+library(pander)
+library(data.table)
+dt = data.table(
+  'Grid size $n$'=c(50,250,750,1000,3000),
+  '$A$'=c(1.5185336153755467,1.5433258991290983,1.5474579432536377,1.5484912548758503,1.5490077629662533),
+  '$E[Y\\mid X=0.5]$'=c(0.2661755641372647,0.26617525294322386,0.2661751929154218,0.26617612339045515,0.2661761233906986)
+)
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 10)
+panderOptions('round', 10)
+pander(dt, style = 'rmarkdown')
+```
+
+
