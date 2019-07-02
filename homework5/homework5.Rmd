@@ -1,0 +1,130 @@
+---
+title: "yes"
+header-includes:
+- \usepackage{../ve414}
+- \semester{Summer}
+- \year{2019}
+- \subtitle{Assignment}
+- \subtitlenumber{5}
+- \blockinfo{}
+- \author{\href{mailto:liuyh615@sjtu.edu.cn}{Yihao Liu} (515370910207)}
+output:
+  pdf_document:
+    latex_engine: xelatex
+    
+geometry: margin=2.25cm
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::knit_engines$set(julia = JuliaCall::eng_juliacall)
+library(pander)
+```
+
+## Question1
+
+### (a)
+
+$$f_{Y\mid X}\propto \exp\left[-\frac{(x-y)^2}{2}\right]\times\frac{1}{1+y^2},$$
+
+$$q_Y(y)=Af_Y(y)=\exp\left[-\frac{(x-y)^2}{2}\right]\times\frac{1}{1+y^2}.$$
+
+Suppose the proposal distribution is a normal distribution with mean $x$ and variance 1,
+$$g_Y(y)=\frac{1}{\sqrt{2\pi}}\exp\left[-\frac{(x-y)^2}{2}\right]\sim \text{Normal}(x,1).$$
+
+$$M\geqslant\frac{q_Y(y)}{g_Y(y)}=\frac{\sqrt{2\pi}}{1+y^2}\geqslant \sqrt{2\pi}.$$
+
+So we can let $M=\sqrt{2\pi}$ and let $U\sim g_Y$, let $V\sim\text{Uniform}(0,1)$, 
+$$V\leqslant\frac{q_Y(U)}{M\cdot g_Y(U)}=\frac{1}{1+y^2}.$$
+
+```{julia ex1.1, results="hide", eval=FALSE}
+using Distributions
+
+function reject_sampling_approximation(x, n)
+    A = Array{Float64}(undef, n)
+    i = 0
+    while i < n
+        v = rand(1)[1]
+        y = rand(Normal(x, 1), 1)[1]
+        if v <= 1 / (1 + y^2)
+            A[i+=1] = y
+        end
+    end
+    return mean(A)
+end
+
+grid_sizes = [50, 250, 750, 1500, 3000]
+for n in grid_sizes
+    println(reject_sampling_approximation(0.5, n))
+end
+```
+
+### (b)
+
+```{r ex1.2, echo=FALSE, message=FALSE, warnings=FALSE, error=FALSE, results='asis'}
+library(pander)
+library(data.table)
+dt = data.table(
+  'Sample size $n$'=c(50,250,750,1500,3000),
+  '$E[Y\\mid X=0.5]$'=c(0.288044756146564,0.28121763612888817,0.26077123869587393,0.23714601790367654,0.2757286397220298)
+)
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 10)
+panderOptions('round', 10)
+pander(dt, style = 'rmarkdown')
+```
+
+### (c)
+
+Use the same $f_Y(y)$, $g_Y(y)$ and $q_Y(y)$ in (a), we can find
+$$h(y)\frac{q_Y(y)}{g_y(y)}=\sqrt{2\pi}\cdot\frac{y}{1+y^2}\in\left[-\sqrt{\pi/2},\sqrt{\pi/2}\right],$$
+which is roughly constant.
+$$w_i=\frac{q_Y(y)}{g_y(y)}=\sqrt{2\pi}\cdot\frac{1}{1+y^2}\in(0,1],$$
+which doen't vary a lot, so we can apply importance sampling.
+
+```{julia ex1.3, results="hide", eval=FALSE}
+using Distributions
+
+function importance_sampling_approximation(x, n)
+    y = rand(Normal(x, 1), n)
+    w = sqrt(2 * pi) ./ (1 .+ y.^2)
+    return mean(y.*w) / mean(w)
+end
+
+grid_sizes = [50, 250, 750, 1500, 3000]
+for n in grid_sizes
+    println(importance_sampling_approximation(0.5, n))
+end
+```
+
+### (d)
+
+```{r ex1.4, echo=FALSE, message=FALSE, warnings=FALSE, error=FALSE, results='asis'}
+library(pander)
+library(data.table)
+dt = data.table(
+  'Sample size $n$'=c(50,250,750,1500,3000),
+  '$E[Y\\mid X=0.5]$'=c(0.30755702154857495,0.246906305068633,0.21017676233582003,0.2751099611217572,0.28318149311742574)
+)
+panderOptions('table.split.table', Inf)
+panderOptions('digits', 10)
+panderOptions('round', 10)
+pander(dt, style = 'rmarkdown')
+```
+
+## Question 2
+
+The bivariate normal distribution is a standard bivariate normal distribution, where the means and variances of $y_1$ and $y_2$ is 0 and 1, and the correlation constant $\rho=0.3$. We can write
+
+$$f_{Y_1Y_2}(y_1,y_2)=\frac{1}{2\pi\sqrt{1-\rho^2}}\exp\left[-\frac{x^2-2\rho xy+y^2}{2(1-\rho^2)}\right],$$
+$$f_{Y_1}(y_1)=\frac{1}{\sqrt{2\pi}}\exp(-y_1^2/2), \quad f_{Y_2}(y_2)=\frac{1}{\sqrt{2\pi}}\exp(-y_2^2/2).$$
+$$f_{Y_1\mid Y_2=y_2}(y_1)=\frac{f_{Y_1Y_2}(y_1,y_2)}{f_{Y_2}(y_2)}=\frac{1}{\sqrt{2\pi(1-\rho^2)}}\exp\left[-\frac{1}{2}\left(\frac{y_1-\rho y_2}{\sqrt{1-\rho^2}}\right)^2\right]\sim\text{Normal}(\rho y_2,1-\rho^2),$$
+$$f_{Y_2\mid Y_1=y_1}(y_2)=\frac{f_{Y_1Y_2}(y_1,y_2)}{f_{Y_1}(y_1)}=\frac{1}{\sqrt{2\pi(1-\rho^2)}}\exp\left[-\frac{1}{2}\left(\frac{y_2-\rho y_1}{\sqrt{1-\rho^2}}\right)^2\right]\sim\text{Normal}(\rho y_1,1-\rho^2).$$
+
+Then we can use gibbs sampling, and in each iteration,
+$$y_1^{(t)}\sim f_{Y_1\mid Y_2=y_2^{(t-1)}}(y_1)\sim\text{Normal}(\rho y_2^{(t-1)},1-\rho^2)\sim \rho y_2^{(t-1)}+\sqrt{1-\rho^2}~\text{Normal}(0,1)=0.3y_2^{(t-1)}+\sqrt{0.91}~\text{Normal}(0,1),$$
+$$y_2^{(t)}\sim f_{Y_2\mid Y_1=y_1^{(t)}}(y_1)\sim\text{Normal}(\rho y_1^{(t)},1-\rho^2)\sim \rho y_1^{(t)}+\sqrt{1-\rho^2}~\text{Normal}(0,1)=0.3y_1^{(t)}+\sqrt{0.91}~\text{Normal}(0,1).$$
+
+
+
+
