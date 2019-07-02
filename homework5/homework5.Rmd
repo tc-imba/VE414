@@ -39,7 +39,6 @@ $$V\leqslant\frac{q_Y(U)}{M\cdot g_Y(U)}=\frac{1}{1+y^2}.$$
 
 ```{julia ex1.1, results="hide", eval=FALSE}
 using Distributions
-
 function reject_sampling_approximation(x, n)
     A = Array{Float64}(undef, n)
     i = 0
@@ -52,7 +51,6 @@ function reject_sampling_approximation(x, n)
     end
     return mean(A)
 end
-
 grid_sizes = [50, 250, 750, 1500, 3000]
 for n in grid_sizes
     println(reject_sampling_approximation(0.5, n))
@@ -84,13 +82,11 @@ which doen't vary a lot, so we can apply importance sampling.
 
 ```{julia ex1.3, results="hide", eval=FALSE}
 using Distributions
-
 function importance_sampling_approximation(x, n)
     y = rand(Normal(x, 1), n)
     w = sqrt(2 * pi) ./ (1 .+ y.^2)
     return mean(y.*w) / mean(w)
 end
-
 grid_sizes = [50, 250, 750, 1500, 3000]
 for n in grid_sizes
     println(importance_sampling_approximation(0.5, n))
@@ -114,7 +110,21 @@ pander(dt, style = 'rmarkdown')
 
 ## Question 2
 
-The bivariate normal distribution is a standard bivariate normal distribution, where the means and variances of $y_1$ and $y_2$ is 0 and 1, and the correlation constant $\rho=0.3$. We can write
+With a Box-Muller Transformation, we can obtain $x_1$ and $x_2$ from Uniform(0,1), then
+$$z_1=\sqrt{-2\ln x_1}\cos(2\pi x_2)$$
+$$z_2=\sqrt{-2\ln x_1}\sin(2\pi x_2)$$
+forms a standard bivariate normal distribution, where the correlation constant is $\rho=0$.
+
+We can verify this by writing
+$$x_1=\exp\left[{-(z_1^2+z_2^2)/2}\right],$$
+$$x_2=\frac{1}{2\pi}\arctan\frac{z_2}{z_1}.$$
+
+And 
+$$\frac{\partial(x_1,x_2)}{\partial(z_1,z_2)}=\begin{vmatrix}\frac{\partial x_1}{\partial z_1}&\frac{\partial x_1}{\partial z_2}\\\frac{\partial x_2}{\partial z_1}&\frac{\partial x_2}{\partial z_2}\end{vmatrix}=-\left[\frac{1}{\sqrt{2\pi}}\exp(-z_1^2/2)\right]\left[\frac{1}{\sqrt{2\pi}}\exp(-z_2^2/2)\right].$$
+
+So we are now able to sample Normal(0,1).
+
+The bivariate normal distribution in the question is a standard bivariate normal distribution, where the means and variances of $y_1$ and $y_2$ is 0 and 1, and the correlation constant is $\rho=0.3$. We can write
 
 $$f_{Y_1Y_2}(y_1,y_2)=\frac{1}{2\pi\sqrt{1-\rho^2}}\exp\left[-\frac{x^2-2\rho xy+y^2}{2(1-\rho^2)}\right],$$
 $$f_{Y_1}(y_1)=\frac{1}{\sqrt{2\pi}}\exp(-y_1^2/2), \quad f_{Y_2}(y_2)=\frac{1}{\sqrt{2\pi}}\exp(-y_2^2/2).$$
@@ -125,6 +135,9 @@ Then we can use gibbs sampling, and in each iteration,
 $$y_1^{(t)}\sim f_{Y_1\mid Y_2=y_2^{(t-1)}}(y_1)\sim\text{Normal}(\rho y_2^{(t-1)},1-\rho^2)\sim \rho y_2^{(t-1)}+\sqrt{1-\rho^2}~\text{Normal}(0,1)=0.3y_2^{(t-1)}+\sqrt{0.91}~\text{Normal}(0,1),$$
 $$y_2^{(t)}\sim f_{Y_2\mid Y_1=y_1^{(t)}}(y_1)\sim\text{Normal}(\rho y_1^{(t)},1-\rho^2)\sim \rho y_1^{(t)}+\sqrt{1-\rho^2}~\text{Normal}(0,1)=0.3y_1^{(t)}+\sqrt{0.91}~\text{Normal}(0,1).$$
 
+## Question3
+
+Gibbs sampling a special case of Metropolis-Hastings algorithm when the random value is always accepted, and gibbs sampling chooses a new sample for each dimension separately from the others, rather than choosing a sample for all dimensions at once. 
 
 
 
