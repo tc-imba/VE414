@@ -1,0 +1,29 @@
+---
+title: "yes"
+header-includes:
+- \usepackage{../ve414}
+- \semester{Summer}
+- \year{2019}
+- \subtitle{Assignment}
+- \subtitlenumber{6}
+- \blockinfo{}
+- \author{\href{mailto:liuyh615@sjtu.edu.cn}{Yihao Liu} (515370910207)}
+output:
+  pdf_document:
+    latex_engine: xelatex
+    
+geometry: margin=2.25cm
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::knit_engines$set(julia = JuliaCall::eng_juliacall)
+library(pander)
+```
+
+## Question1
+
+### (a)
+
+
+
